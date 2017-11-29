@@ -1,0 +1,11 @@
+{
+    "client": "pg",
+    "connection": {
+        "user": "bennycooly",
+        "host": "localhost",
+        "port": 5432,
+        "database": "cartbuddy",
+        "password": ""        
+    }
+    
+}
