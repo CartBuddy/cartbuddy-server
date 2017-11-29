@@ -1,8 +1,10 @@
 
 const Koa = require("koa");
+const Router = require('koa-router');
 const DbClient = require("./database/db");
 
 const app = new Koa();
+const router = new Router();
 
 app.use(async ctx => {
     ctx.body = "Hello World"
