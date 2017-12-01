@@ -38,7 +38,7 @@ class DbClient {
     }
 }
 
-let pgClient = new Knex(DB_CONFIG);
+let knex = new Knex(DB_CONFIG);
 
-module.exports = pgClient;
+module.exports = knex;
 

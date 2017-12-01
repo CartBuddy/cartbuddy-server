@@ -1,6 +1,0 @@
-
-
-function get(ctx, next) {
-
-}
-
