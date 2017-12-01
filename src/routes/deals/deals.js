@@ -29,7 +29,7 @@ router.get("/deals", async (ctx, next) => {
                     break;
 
                 default:
-                    res = await knex.select().table("deals");
+                    res = await knex("deals");
             }
         }
         res = await knex("deals").where(ctx.query);
