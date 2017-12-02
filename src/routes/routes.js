@@ -1,8 +1,12 @@
 
-const routerDeals = require("./deals/deals");
+const deals = require("./deals/deals");
+const images = require("./images/images");
+const users = require("./users/users");
 
 let routers = [
-    routerDeals
+    deals,
+    images,
+    users
 ];
 
 module.exports = routers;

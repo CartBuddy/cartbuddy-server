@@ -1,12 +1,12 @@
 
 const Koa = require("koa");
-const bodyParser = require("koa-bodyparser");
 const uuidv1 = require("uuid/v1");
+const Minio = require("minio");
 
 const routers = require("./routes/routes");
-const knex = require("./database/db-client");
-let logger = require("./logger/logger");
-const minioClient = require("./object-store/minio");
+let knex = require("./database/db-client");
+let log = require("./logger/logger");
+let { minioClient, BUCKET_NAME } = require("./object-store/minio");
 
 
 async function main() {
@@ -17,22 +17,17 @@ async function main() {
      */
     app.use(async (ctx, next) => {
         // request
-        let log = logger.child({ request_id: uuidv1() });
-        log.debug({ req: ctx.req });
+        let logc = log.child({ request_id: uuidv1() });
+        logc.debug({ req: ctx.req });
         const startTime = Date.now();
 
         await next();
 
         // response
         const elapsedTime = Date.now() - startTime;
-        log.info(`${ctx.ip} ${ctx.host} [${new Date().toISOString()}] "${ctx.method} ${ctx.url} ${ctx.protocol}" ${ctx.status} ${ctx.length ? ctx.length : ""} - ${elapsedTime}ms`);
-        log.debug({ res: ctx.res });
+        logc.info(`${ctx.ip} ${ctx.host} [${new Date().toISOString()}] "${ctx.method} ${ctx.url} ${ctx.protocol}" ${ctx.status} ${ctx.length ? ctx.length : ""} - ${elapsedTime}ms`);
+        logc.debug({ res: ctx.res });
     });
-
-    /**
-     * Body Parser
-     */
-    app.use(bodyParser());
 
     /**
      * Add app routes.
@@ -51,7 +46,7 @@ async function main() {
         .createTableIfNotExists("deals", (table) => {
             table.uuid("id").primary();
             table.uuid("user_id");
-            table.string("photo_url");
+            table.specificType("photo_urls", "text[]");
             table.string("title");
             table.text("description");
             // created_at and updated_at fields
@@ -73,20 +68,23 @@ async function main() {
             table.timestamp("joined_on");
         });
 
-    console.log(res);
+    log.info("Successfully created database tables.");
 
     /**
-     * Create the minio file server.
+     * Create the minio file client.
      */
     try {
-        await minioClient.makeBucket("cartbuddy", "");
-        console.log("Successfully made bucket.");
+        await minioClient.bucketExists(BUCKET_NAME);
+        log.info("Using existing bucket.");
     }
-
+    // bucket does not exist, so create it
     catch (err) {
-        console.error("Error creating bucket: " + err);
+        console.error(err);
+        await minioClient.makeBucket(BUCKET_NAME, "");
+        log.info("Successfully made bucket.");
     }
 
+    await minioClient.setBucketPolicy(BUCKET_NAME, "", Minio.Policy.READWRITE);
 
     console.log("Listening on port 3000");
     app.listen(3000);

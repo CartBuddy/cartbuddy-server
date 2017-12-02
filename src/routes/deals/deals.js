@@ -1,9 +1,11 @@
 
 const Router = require("koa-router");
+const body = require("koa-body");
+const uuidv4 = require("uuid/v4");
+
 const knex = require("../../database/db-client");
 let log = require("../../logger/logger");
-
-const uuidv4 = require("uuid/v4");
+const Deal = require("../../models/deal");
 
 router = new Router();
 
@@ -42,7 +44,12 @@ router.get("/deals", async (ctx, next) => {
         log.info(res);
     }
 
-    ctx.body = res;
+    // convert to json objects
+    let deals = res.map((sqlDeal) => {
+        return Deal.fromSql(sqlDeal);
+    });
+
+    ctx.body = deals;
     ctx.type = "application/json";
     ctx.status = 200;
 });
@@ -59,7 +66,8 @@ router.get("/deals/:id", async (ctx, next) => {
 
     // return the element
     if (res.length === 1) {
-        ctx.body = res[0];
+        let deal = Deal.fromSql(res[0]);
+        ctx.body = deal;
     }
 
     // not found, so return empty object
@@ -74,20 +82,26 @@ router.get("/deals/:id", async (ctx, next) => {
 /**
  * Create a deal.
  */
-router.post("/deals", async (ctx, next) => {
+router.post("/deals", body(), async (ctx, next) => {
     let req = ctx.request.body;
-    let res = await knex("deals").insert({
-        id: uuidv4(),
-        title: req.title,
-        description: req.description,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        category: req.category,
-        place_id: req.place_id,
-        num_likes: 0
-    });
+    let deal = new Deal(req);
+    let res = await knex("deals")
+        .insert(deal.toSql())
+        .returning("id");
+    // let res = await knex("deals").insert({
+    //     id: uuidv4(),
+    //     title: req.title,
+    //     description: req.description,
+    //     created_at: new Date().toISOString(),
+    //     updated_at: new Date().toISOString(),
+    //     category: req.category,
+    //     place_id: req.place_id,
+    //     num_likes: 0
+    // });
     log.info(res);
-    ctx.body = {};
+    // res should be an array with one id
+    let id = res[0];
+    ctx.body = `${ctx.origin}/deals/${id}`;
     ctx.status = 201;
 });
 
