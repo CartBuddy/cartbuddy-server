@@ -1,0 +1,20 @@
+[Unit]
+Description=Cartbuddy Node.js Server
+Requires=After=postgresql.service minio.service
+
+[Service]
+ExecStart=/home/bennycooly/.nvm/nvm-exec npm start
+# Required on some systems
+WorkingDirectory=/home/bennycooly/Projects/cartbuddy-server
+Restart=always
+ # Restart service after 10 seconds if node service crashes
+ RestartSec=10
+ # Output to syslog
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=cartbuddy
+User=bennycooly
+Environment=NODE_VERSION=9 NODE_ENV=production PORT=1337
+
+[Install]
+WantedBy=multi-user.target
