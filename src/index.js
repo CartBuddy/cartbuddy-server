@@ -47,8 +47,8 @@ async function main() {
      * Create the database tables.
      */
     let res = await knex.schema
-        // .dropTableIfExists("deals")
-        // .dropTableIfExists("users")
+        .dropTableIfExists("deals")
+        .dropTableIfExists("users")
         .createTableIfNotExists("deals", (table) => {
             table.uuid("id").primary();
             table.uuid("user_id");
