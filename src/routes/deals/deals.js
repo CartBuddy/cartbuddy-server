@@ -22,7 +22,7 @@ router.get("/deals", async (ctx, next) => {
             switch(sortType) {
                 case "recent":
                 log.info("here");
-                res = await knex("deals").orderBy("updated_at", "asc");
+                res = await knex("deals").orderBy("updated_at", "desc");
                     break;
                 
                 case "nearby":
