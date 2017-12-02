@@ -91,6 +91,7 @@ router.post("/deals", body(), async (ctx, next) => {
     log.info(res);
     // res should be an array with one id
     let id = res[0];
+    log.info(ctx.origin);
     ctx.body = `${ctx.origin}/deals/${id}`;
     ctx.status = 201;
 });
