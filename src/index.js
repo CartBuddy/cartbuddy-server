@@ -2,7 +2,7 @@
 const Koa = require("koa");
 const uuidv1 = require("uuid/v1");
 const Minio = require("minio");
-const cors = require("koa2-cors");
+const cors = require("@koa/cors");
 
 const routers = require("./routes/routes");
 let knex = require("./database/db-client");
