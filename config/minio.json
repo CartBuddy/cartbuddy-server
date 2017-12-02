@@ -1,5 +1,5 @@
 {
-    "endPoint": "localhost",
+    "endPoint": "minio.benfu.me",
     "port": 9000,
     "secure": false,
     "accessKey": "GS9MNH3MCVJTS251WVJE",

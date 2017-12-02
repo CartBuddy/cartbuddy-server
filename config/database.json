@@ -2,10 +2,9 @@
     "client": "pg",
     "connection": {
         "user": "bennycooly",
-        "host": "localhost",
+        "host": "104.236.12.159",
         "port": 5432,
         "database": "cartbuddy",
-        "password": ""        
+        "password": ""
     }
-    
 }

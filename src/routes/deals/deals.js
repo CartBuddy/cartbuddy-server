@@ -88,16 +88,6 @@ router.post("/deals", body(), async (ctx, next) => {
     let res = await knex("deals")
         .insert(deal.toSql())
         .returning("id");
-    // let res = await knex("deals").insert({
-    //     id: uuidv4(),
-    //     title: req.title,
-    //     description: req.description,
-    //     created_at: new Date().toISOString(),
-    //     updated_at: new Date().toISOString(),
-    //     category: req.category,
-    //     place_id: req.place_id,
-    //     num_likes: 0
-    // });
     log.info(res);
     // res should be an array with one id
     let id = res[0];

@@ -2,6 +2,7 @@
 const Koa = require("koa");
 const uuidv1 = require("uuid/v1");
 const Minio = require("minio");
+const cors = require("@koa/cors");
 
 const routers = require("./routes/routes");
 let knex = require("./database/db-client");
@@ -28,6 +29,11 @@ async function main() {
         logc.info(`${ctx.ip} ${ctx.host} [${new Date().toISOString()}] "${ctx.method} ${ctx.url} ${ctx.protocol}" ${ctx.status} ${ctx.length ? ctx.length : ""} - ${elapsedTime}ms`);
         logc.debug({ res: ctx.res });
     });
+
+    /**
+     * CORS
+     */
+    app.use(cors());
 
     /**
      * Add app routes.
