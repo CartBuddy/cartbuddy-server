@@ -13,7 +13,6 @@ let { minioClient, BUCKET_NAME } = require("./object-store/minio");
 async function main() {
     const app = new Koa();
     app.proxy = true;
-    
     /**
      * Configure the logger.
      */
