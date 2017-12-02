@@ -21,7 +21,8 @@ router.get("/deals", async (ctx, next) => {
             let sortType = ctx.query.sort;
             switch(sortType) {
                 case "recent":
-                res = await knex("deals").orderBy("updated_at");
+                log.info("here");
+                res = await knex("deals").orderBy("updated_at", "asc");
                     break;
                 
                 case "nearby":
@@ -34,8 +35,11 @@ router.get("/deals", async (ctx, next) => {
                     res = await knex("deals");
             }
         }
-        res = await knex("deals").where(ctx.query);
+        else {
+            res = await knex("deals").where(ctx.query);
+        }
         log.info(res);
+        
     }
 
     // no query
