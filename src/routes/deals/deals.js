@@ -21,8 +21,7 @@ router.get("/deals", async (ctx, next) => {
             let sortType = ctx.query.sort;
             switch(sortType) {
                 case "recent":
-                log.info("here");
-                res = await knex("deals").orderBy("updated_at", "desc");
+                    res = await knex("deals").orderBy("updated_at", "desc");
                     break;
                 
                 case "nearby":
@@ -49,9 +48,13 @@ router.get("/deals", async (ctx, next) => {
     }
 
     // convert to json objects
-    let deals = res.map((sqlDeal) => {
-        return Deal.fromSql(sqlDeal);
-    });
+    let deals = []
+    if (Array.isArray(res)) {
+        deals = res.map((sqlDeal) => {
+            return Deal.fromSql(sqlDeal);
+        });
+    }
+    
 
     ctx.body = deals;
     ctx.type = "application/json";
