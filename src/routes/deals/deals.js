@@ -15,7 +15,7 @@ router = new Router();
 router.get("/deals", async (ctx, next) => {
     let res = {};
     // parse the query
-    if (ctx.query !== {}) {
+    if (ctx.querystring !== "") {
         // sort deals
         if (ctx.query.sort) {
             let sortType = ctx.query.sort;

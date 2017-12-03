@@ -14,7 +14,7 @@ router = new Router();
  */
 router.get("/users", async (ctx, next) => {
     let res = [];
-    if (ctx.query !== {}) {
+    if (ctx.querystring !== "") {
         log.info(ctx.query);
         if (ctx.query.email) {
             res = await knex("users").where({
