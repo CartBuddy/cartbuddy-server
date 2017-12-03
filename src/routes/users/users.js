@@ -18,7 +18,7 @@ router.get("/users", async (ctx, next) => {
     if (ctx.query) {
         log.info(ctx.query);
         if (ctx.query.email) {
-            res = await knex("deals").where({
+            res = await knex("users").where({
                 email: ctx.query.email
             });
         }
