@@ -46,35 +46,48 @@ async function main() {
     /**
      * Create the database tables.
      */
-    let res = await knex.schema
-        .dropTableIfExists("deals")
-        .dropTableIfExists("users")
-        .createTableIfNotExists("deals", (table) => {
-            table.uuid("id").primary();
-            table.uuid("user_id");
-            table.specificType("photo_urls", "text[]");
-            table.string("title");
-            table.text("description");
-            // created_at and updated_at fields
-            // equivalent to:
-            //  table.timestamp("created_at");
-            //  table.timestamp("updated_at");
-            table.timestamps();
-            table.string("category");
-            table.string("food_id");
-            table.string("place_id");
-            table.integer("num_likes");
-            table.specificType("location", "point");
-            table.specificType("comments", "text[]");
-        })
-        .createTableIfNotExists("users", (table) => {
-            table.uuid("id").primary();
-            table.string("username");
-            table.string("email");
-            table.timestamp("joined_on");
-        });
+    let existTables = await knex.schema
+        .hasTable("deals")
+        .hasTable("users");
+    let existsAll = existTables.reduce((accumulator, currentValue) => {
+        return accumulator && currentValue;
+    });
 
-    log.info("Successfully created database tables.");
+    // create tables if not all exist
+    if (!existsAll) {
+        log.info("Creating database tables.");
+        let res = await knex.schema
+            .dropTableIfExists("deals")
+            .dropTableIfExists("users")
+            .createTableIfNotExists("deals", (table) => {
+                table.uuid("id").primary();
+                table.uuid("user_id");
+                table.specificType("photo_urls", "text[]");
+                table.string("title");
+                table.text("description");
+                // created_at and updated_at fields
+                // equivalent to:
+                //  table.timestamp("created_at");
+                //  table.timestamp("updated_at");
+                table.timestamps();
+                table.string("category");
+                table.string("food_id");
+                table.string("place_id");
+                table.integer("num_likes");
+                table.specificType("location", "point");
+                table.specificType("comments", "text[]");
+            })
+            .createTableIfNotExists("users", (table) => {
+                table.uuid("id").primary();
+                table.string("username");
+                table.string("email");
+                table.timestamp("joined_on");
+            });
+        log.info("Successfully created database tables.");
+    }
+    else {
+        log.info("Using existing tables.");
+    }
 
     /**
      * Create the minio file client.
