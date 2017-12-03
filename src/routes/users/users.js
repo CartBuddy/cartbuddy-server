@@ -13,17 +13,30 @@ router = new Router();
  * Get all users.
  */
 router.get("/users", async (ctx, next) => {
-    let res = {};
-    res = await knex("users");
-    log.info(res);
+    let res = [];
 
+    if (ctx.query) {
+        log.info(ctx.query);
+        if (ctx.query.email) {
+            res = await knex("deals").where({
+                email: ctx.query.email
+            });
+        }
+    }
+
+    else {
+        res = await knex("users");
+    }
+
+    log.info(res);
     let users = res.map((sqlUser) => {
         return User.fromSql(sqlUser);
     });
-
+    
     ctx.body = users;
     ctx.type = "application/json";
     ctx.status = 200;
+        
 });
 
 /**
