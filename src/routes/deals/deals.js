@@ -28,6 +28,7 @@ router.get("/deals", async (ctx, next) => {
                     break;
 
                 case "popular":
+                    res = await knex("deals").orderBy("num_likes", "desc");
                     break;
 
                 default:
