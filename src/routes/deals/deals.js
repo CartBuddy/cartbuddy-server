@@ -101,7 +101,7 @@ router.delete("/deals/:id", async (ctx, next) => {
     }
 
     // now delete the deal
-    let res = await knex("deals").where({
+    res = await knex("deals").where({
         id: ctx.params.id
     })
     .delete();
