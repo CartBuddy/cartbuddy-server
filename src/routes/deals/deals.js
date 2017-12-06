@@ -95,10 +95,13 @@ router.delete("/deals/:id", async (ctx, next) => {
     let deal = Deal.fromSql(res[0]);
 
     // first delete the images
-    for (photoUrl of deal.photoUrls) {
-        let photoId = photoUrl.split("/").pop();
-        minioClient.removeObject(BUCKET_NAME, photoId);
+    if (Array.isArray(deal.photoUrls)) {
+        for (let photoUrl of deal.photoUrls) {
+            let photoId = photoUrl.split("/").pop();
+            minioClient.removeObject(BUCKET_NAME, photoId);
+        }
     }
+    
 
     // now delete the deal
     res = await knex("deals").where({
