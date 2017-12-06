@@ -87,6 +87,17 @@ router.get("/deals/:id", async (ctx, next) => {
     ctx.status = 200;
 });
 
+router.delete("/deals/:id", async (ctx, next) => {
+    let res = await knex("deals").where({
+        id: ctx.params.id
+    })
+    .delete();
+
+    log.info(res);
+    ctx.status = 202;
+
+});
+
 /**
  * Create a deal.
  */
