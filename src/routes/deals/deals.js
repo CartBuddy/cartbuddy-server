@@ -6,6 +6,7 @@ const uuidv4 = require("uuid/v4");
 const knex = require("../../database/db-client");
 let log = require("../../logger/logger");
 const Deal = require("../../models/deal");
+let { minioClient, BUCKET_NAME } = require("../../object-store/minio");
 
 router = new Router();
 
@@ -90,10 +91,24 @@ router.get("/deals/:id", async (ctx, next) => {
 router.delete("/deals/:id", async (ctx, next) => {
     let res = await knex("deals").where({
         id: ctx.params.id
+    });
+    let deal = Deal.fromSql(res[0]);
+
+    // first delete the images
+    for (photoUrl of deal.photoUrls) {
+        let photoId = photoUrl.split("/").pop();
+        minioClient.removeObject(BUCKET_NAME, photoId);
+    }
+
+    // now delete the deal
+    let res = await knex("deals").where({
+        id: ctx.params.id
     })
     .delete();
 
     log.info(res);
+
+
     ctx.status = 202;
 
 });
